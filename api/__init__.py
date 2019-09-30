@@ -10,11 +10,11 @@ CORS(app)
 def prediction():
     predictor = joblib.load('models/model_joblib')
     data = predictor.tolist()
-    return predictor, data
+    return data
 
 class Clients(Resource):
     def get(self):
-        predictor, data = prediction()
+        data = prediction()
         return data
 
     def post(self):        

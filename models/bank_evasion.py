@@ -24,7 +24,7 @@ warnings.filterwarnings('ignore')
 ## Part 1: Data Pre-processing
 
 #Import the dataset and set the dependent and independent variables
-dataset = pd.read_csv('Churn_Modelling.csv')
+dataset = pd.read_csv('../data/Churn_Modelling.csv')
 X = dataset.iloc[:, 3:13].values
 Y = dataset.iloc[:, 13].values
 
@@ -88,13 +88,41 @@ classifier.compile(optimizer='adam', loss='binary_crossentropy', metrics = ['acc
 #Fitting the classifier to the Training set
 classifier.fit(X_train, Y_train, batch_size=10, nb_epoch=100)
 
-#Predicting the Test set results
-Y_pred = classifier.predict(X_test)
 
-##Aplying the threadshold to see use the confusion matrix
-#Y_pred = (Y_pred >0.5)
+#Part 4
+## Predicticting the probability of the remained clients to leave
 
+#Import data
+
+clients = dataset[dataset['Exited'] == 0]
+
+clients = clients.iloc[:, 3:13].values
+
+#Encoding the countries
+clients[:, 1] = labelencoder_X_1.fit_transform(clients[:, 1])
+    
+#Encoding the gender
+labelencoder_X_2 = LabelEncoder()
+clients[:, 2] = labelencoder_X_2.fit_transform(clients[:, 2])
+
+#One hot encode the labeled countries
+onehotencoder_X = OneHotEncoder(categorical_features = [1])
+clients = onehotencoder_X.fit_transform(clients).toarray()
+clients = clients[:, 1:]
+
+
+#Feature Scaling
+from sklearn.preprocessing import StandardScaler
+sc = StandardScaler()
+clients = sc.fit_transform(clients)
+
+prediction = classifier.predict(clients)
+
+remained = dataset[dataset['Exited'] == 0]
+remained.drop('Exited', inplace=True, axis=1)
+remained['Probability to leave'] = prediction
+remained = remained.values
 
 from sklearn.externals import joblib
 
-joblib.dump(Y_pred, 'model_joblib')
+joblib.dump(remained, 'model_joblib')

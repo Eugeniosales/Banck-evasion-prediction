@@ -1,38 +1,3 @@
-/*
-class ordenation{
-    static quickSort(array, start, end){
-        let i = start
-        let j = end - 1
-        let pivot = (start+end)/2
-
-        while(i < pivot){
-            i+=1;
-        }
-        while(j > pivot){
-            j+=1;
-        }
-        if (i < pivot && j > pivot){
-            let aux = array[i];
-            array[i] = array[j];
-            array[j] = aux;
-        }
-        quickSort(array);
-        quickSort(array);
-        
-    }
-}
-
-
-axios.get('https://api.github.com/users/Eugeniosales')
-    .then(function(response){
-        console.log(response.data.avatar_url);
-    })
-    .catch(function(error){
-        console.warn(error);
-    });
-*/
-
-
 class App{
     constructor(){
         this.clients = [];
@@ -41,44 +6,76 @@ class App{
 
     async addClient(){
 
-        const response = await axios.get('http:/localhost:5000/clients');
-        const {Surname, CustomerId} = response.data;
-        console.log(response.data);
+        let response = await fetch('http://localhost:5000/clients');
+        let data = await response.json();
         
-        for(let i of response.data){
+        for(let i of data){
+            const {CustomerId, Surname, CreditScore, Geography, Gender, Age, Balance, NumOfProducts, EstimatedSalary, Probability} = i;
+
             this.clients.push({
-                RowNumber: '',
                 CustomerId,
-                Surname: i.Surname,
-                CreditScore: '',
-                Geography: '',
-                Gender: '',
-                Age: '',
-                Tenure: '',
-                Balance: '',
-                NumOfProducts: '',
-                HasCrCard: '',
-                IsActiveMember: '',
-                EstimatedSalary: '',
-                Exited: '',
+                Surname,
+                CreditScore,
+                Geography,
+                Gender,
+                Age,
+                Balance,
+                NumOfProducts,
+                EstimatedSalary,
+                Probability,
             });
         }
+        this.quickSort(this.clients, 0, this.clients.length);
     
-        console.log(this.clients.Surname);
+        //console.log(this.clients[mid].Probability);
         this.render();
     }
 
     render(){
-        //this.listClients.innerHTML = '';
 
         this.clients.forEach( client => {
-            let content = document.createTextNode(client.Surname);
+            let Surname = document.createTextNode(client.Surname);
+            let CustomerId = document.createTextNode(client.CustomerId);
+            let CreditScore = document.createTextNode(client.CreditScore);
+            let Geography = document.createTextNode(client.Geography);
+            let Probability = document.createTextNode(client.Probability);
 
             let name = document.createElement('li');
-            name.appendChild(content);
+            //name.appendChild(Surname);
+            //name.appendChild(CustomerId);
+            //name.appendChild(CreditScore);
+            //name.appendChild(Geography);
+            name.appendChild(Probability);
 
             this.listClients.appendChild(name);
         });
+    }
+
+    quickSort(array, start, end){
+        let i = start;
+        let j = end-1;
+        let mid = Math.floor((start+end)/2);
+        let pivot = array[mid].Probability;
+
+        while(array[i].Probability > pivot && i < end){
+            i++;
+        }
+        while(array[j].Probability < pivot && j > start){
+            j--;
+        }
+        if (i <= j){
+            let aux = array[i].Probability;
+            array[i].Probability = array[j].Probability;
+            array[j].Probability = aux;
+            i++;
+            j--;
+        }
+        if(j > start){
+            this.quickSort(array, start, j+1);
+        }
+        if(i < end){
+            this.quickSort(array, i, end);
+        }
     }
     
 }

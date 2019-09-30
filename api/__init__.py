@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, render_template
 from flask_restful import Resource, Api, reqparse
 from flask_cors import CORS, cross_origin
 from sklearn.externals import joblib
+import json
 
 app = Flask(__name__)
 api = Api(app)
@@ -14,7 +15,7 @@ def prediction():
 class Clients(Resource):
     def get(self):
         data = prediction()
-        return jsonify(data)
+        return json.loads(data)
 
     def post(self):        
         parser = reqparse.RequestParser()

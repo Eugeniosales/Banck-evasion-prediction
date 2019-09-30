@@ -5,7 +5,7 @@ Created on Sun Sep 22 00:55:40 2019
 
 @author: eugenio
 
-Kind of problem: Binary Classification
+Kind of problem: Probability
 
 Problem description: A bank is losing his clients and wants to take some decisions based on this predicton
 
@@ -120,9 +120,14 @@ prediction = classifier.predict(clients)
 
 remained = dataset[dataset['Exited'] == 0]
 remained.drop('Exited', inplace=True, axis=1)
-remained['Probability to leave'] = prediction
-remained = remained.values
+remained['Probability'] = prediction
+
+#Parsing the dataframe to json
+
+import json
+d = remained.to_dict(orient='records')
+data = json.dumps(d)
 
 from sklearn.externals import joblib
 
-joblib.dump(remained, 'model_joblib')
+joblib.dump(data, 'json_data')

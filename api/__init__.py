@@ -8,14 +8,13 @@ api = Api(app)
 CORS(app)
 
 def prediction():
-    predictor = joblib.load('models/model_joblib')
-    data = predictor.tolist()
-    return data
+    predictor = joblib.load('models/json_data')
+    return predictor
 
 class Clients(Resource):
     def get(self):
         data = prediction()
-        return data
+        return jsonify(data)
 
     def post(self):        
         parser = reqparse.RequestParser()
